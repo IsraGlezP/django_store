@@ -7,13 +7,22 @@ from django.contrib.auth.models import User
 
 from .forms import RegisterForm
 
+# Models
+from applications.products.models import Product
+
 def index(request):
+    products = Product.objects.all()
+
     return render(request, 'index.html', {
-        'message': 'Nuevo mensaje desde la vista'
+        'message': 'Nuevo mensaje desde la vista',
+        'products': products
     })
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+
     if request.method == 'POST':
         username = request.POST.get('username') 
         password = request.POST.get('password')
@@ -38,6 +47,9 @@ def logout_view(request):
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+
     form = RegisterForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
