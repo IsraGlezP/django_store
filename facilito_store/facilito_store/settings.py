@@ -41,6 +41,8 @@ DJANGO_APPS = [
 
 LOCAL_APPS = [
     'applications.products',
+    'applications.categories',
+    'applications.users',
 ]
 
 THIRD_PARTY_APPS = []
@@ -60,6 +62,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'facilito_store.urls'
+
+AUTH_USER_MODEL = 'users.User'
 
 TEMPLATES = [
     {
