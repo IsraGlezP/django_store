@@ -15,6 +15,7 @@ urlpatterns = [
     path('usuarios/logout', views.logout_view, name='logout'),
     path('usuarios/registro', views.register, name='register'),
     path('productos/', include('applications.products.urls')),
+    path('carrito/', include('applications.carts.urls')),
 ]
 
 if settings.DEBUG:
