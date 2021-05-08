@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 
+from django.http import HttpResponseRedirect
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
@@ -32,6 +34,10 @@ def login_view(request):
         if user:
             login(request, user)
             messages.success(request, 'Bienvenido {}'.format(user.username))
+
+            if request.GET.get('next'):
+                return HttpResponseRedirect(request.GET['next'])
+
             return redirect('index')
         else:
             messages.error(request, 'Usuario y/o contraseña no válidos')
