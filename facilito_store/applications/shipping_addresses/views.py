@@ -1,5 +1,7 @@
 from django.urls import reverse_lazy
 
+from django.http import HttpResponseRedirect
+
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
 
@@ -12,6 +14,9 @@ from .models import ShippingAddress
 from .forms import ShippingAddressForm
 
 from django.views.generic import ListView, UpdateView, DeleteView
+
+from applications.carts.utils import get_or_create_cart
+from applications.orders.utils import get_or_create_order
 
 
 class ShippingAddressListView(LoginRequiredMixin, ListView):
@@ -53,6 +58,9 @@ class ShippingAddressDeleteView(LoginRequiredMixin, DeleteView):
         if request.user.id != self.get_object().user_id:
             return redirect('carts:cart')
 
+        if self.get_object().has_orders():
+            return redirect('shipping_addresses:shipping_addresses')
+
         return super(ShippingAddressUpdateView, self).dispatch(rqeuest, *args, **kwargs)
 
     
@@ -66,6 +74,14 @@ def create(request):
         shipping_address.default = not request.user.has_shipping_address()
 
         shipping_address.save()
+
+        if request.GET.get('request'):
+            if request.GET['next'] == reverse('orders:address'):
+                cart = get_or_create_cart(request)
+                order = get_or_create_order(cart, request)
+
+                order.update_shipping_address(shipping_address)
+                return HttpResponseRedirect(request.GET['next'])
 
         messages.success(request, 'Dirección agregada exitosamente')
         return redirect('shipping_addresses:shipping_addresses')

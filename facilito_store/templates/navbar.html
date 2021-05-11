@@ -17,7 +17,7 @@
                         <i class="fas fa-shopping-cart"></i>
                     </a>
                 </li>
-                {% if user.is_autenticated %}
+                {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.path == shipping_addresses %} active {% endif %}" href="{{ shipping_addresses }}">
                             Mis direcciones
